@@ -1,0 +1,107 @@
+{
+    "Version": "2012-10-17",
+    "Statement": [
+        {
+            "Sid": "VisualEditor0",
+            "Effect": "Allow",
+            "Action": [
+                "iam:GetPolicyVersion",
+                "acm:DeleteCertificate",
+                "iam:RemoveRoleFromInstanceProfile",
+                "iam:CreateRole",
+                "iam:AttachRolePolicy",
+                "rds:CreateDBSubnetGroup",
+                "ecs:DescribeTaskDefinition",
+                "iam:AddRoleToInstanceProfile",
+                "ecs:UpdateService",
+                "logs:TagLogGroup",
+                "iam:DetachRolePolicy",
+                "acm:RequestCertificate",
+                "iam:ListAttachedRolePolicies",
+                "ecs:RegisterTaskDefinition",
+                "rds:ModifyDBInstance",
+                "rds:DeleteDBInstance",
+                "iam:GetRole",
+                "iam:GetPolicy",
+                "ecs:CreateCluster",
+                "acm:AddTagsToCertificate",
+                "ecr:GetAuthorizationToken",
+                "ecs:DeleteService",
+                "ecs:DeleteCluster",
+                "iam:DeleteRole",
+                "logs:CreateLogGroup",
+                "acm:ListTagsForCertificate",
+                "ecs:DescribeClusters",
+                "rds:DeleteDBSubnetGroup",
+                "acm:DescribeCertificate",
+                "ec2:*",
+                "logs:ListTagsLogGroup",
+                "iam:CreateInstanceProfile",
+                "rds:DescribeDBSubnetGroups",
+                "iam:TagRole",
+                "iam:DeletePolicy",
+                "ecs:DeregisterTaskDefinition",
+                "iam:ListInstanceProfilesForRole",
+                "iam:PassRole",
+                "ecs:CreateService",
+                "rds:CreateDBInstance",
+                "rds:DescribeDBInstances",
+                "ecs:DescribeServices",
+                "iam:CreatePolicyVersion",
+                "iam:DeleteInstanceProfile",
+                "logs:DescribeLogGroups",
+                "iam:GetInstanceProfile",
+                "s3:*",
+                "logs:DeleteLogGroup",
+                "elasticloadbalancing:*",
+                "iam:CreatePolicy",
+                "iam:CreateServiceLinkedRole",
+                "rds:ListTagsForResource",
+                "iam:ListPolicyVersions",
+                "route53:*",
+                "iam:DeletePolicyVersion"
+            ],
+            "Resource": "*"
+        },
+        {
+            "Sid": "VisualEditor1",
+            "Effect": "Allow",
+            "Action": [
+                "dynamodb:PutItem",
+                "dynamodb:DeleteItem",
+                "dynamodb:GetItem",
+                "s3:ListBucket"
+            ],
+            "Resource": [
+                "arn:aws:dynamodb:*:*:table/recipe-app-api-devops-tf-state-lock",
+                "arn:aws:s3:::kientree-app-api-devops-tfstate"
+            ]
+        },
+        {
+            "Sid": "VisualEditor2",
+            "Effect": "Allow",
+            "Action": [
+                "s3:PutObject",
+                "s3:GetObject"
+            ],
+            "Resource": "arn:aws:s3:::kientree-app-api-devops-tfstate/*"
+        },
+        {
+            "Sid": "VisualEditor3",
+            "Effect": "Allow",
+            "Action": "ecr:*",
+            "Resource": "arn:aws:ecr:us-east-1:*:repository/recipe-app-api-devops"
+        },
+        {
+            "Sid": "VisualEditor4",
+            "Effect": "Deny",
+            "Action": "ec2:RunInstances",
+            "Resource": "arn:aws:ec2:*:*:instance/*",
+            "Condition": {
+                "ForAnyValue:StringNotLike": {
+                    "ec2:InstanceType": "t2.micro"
+                }
+            }
+        }
+    ]
+}
