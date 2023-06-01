@@ -59,7 +59,8 @@
                 "rds:ListTagsForResource",
                 "iam:ListPolicyVersions",
                 "route53:*",
-                "iam:DeletePolicyVersion"
+                "iam:DeletePolicyVersion",
+                "rds:AddTagsToResource"
             ],
             "Resource": "*"
         },
