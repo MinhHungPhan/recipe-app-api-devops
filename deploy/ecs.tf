@@ -7,7 +7,7 @@ resource "aws_ecs_cluster" "main" {
 resource "aws_iam_policy" "task_execution_role_policy" {
   name        = "${local.prefix}-task-exec-role-policy"
   path        = "/"
-  description = "Allow retrieving images and adding to logs"
+  description = "Allow retrieving of images and adding to logs"
   policy      = file("./templates/ecs/task-exec-role.json")
 }
 
@@ -37,7 +37,7 @@ resource "aws_cloudwatch_log_group" "ecs_task_logs" {
 }
 
 data "template_file" "api_container_definitions" {
-  template = file("templates/ecs/container-definitions.json.tpl")
+  template = file("./templates/ecs/container-definitions.json.tpl")
 
   vars = {
     app_image         = var.ecr_image_api
@@ -49,7 +49,7 @@ data "template_file" "api_container_definitions" {
     db_pass           = aws_db_instance.main.password
     log_group_name    = aws_cloudwatch_log_group.ecs_task_logs.name
     log_group_region  = data.aws_region.current.name
-    allowed_hosts     = "*"
+    allowed_hosts     = aws_lb.api.dns_name
   }
 }
 
@@ -71,7 +71,7 @@ resource "aws_ecs_task_definition" "api" {
 }
 
 resource "aws_security_group" "ecs_service" {
-  description = "Access for the ECS service"
+  description = "Access for the ECS Service"
   name        = "${local.prefix}-ecs-service"
   vpc_id      = aws_vpc.main.id
 
@@ -96,7 +96,9 @@ resource "aws_security_group" "ecs_service" {
     from_port   = 8000
     to_port     = 8000
     protocol    = "tcp"
-    cidr_blocks = ["0.0.0.0/0"]
+    security_groups = [
+            aws_security_group.lb.id
+    ]
   }
 
   tags = local.common_tags
@@ -112,10 +114,15 @@ resource "aws_ecs_service" "api" {
 
   network_configuration {
     subnets = [
-      aws_subnet.public_a.id,
-      aws_subnet.public_b.id,
+      aws_subnet.private_a.id,
+      aws_subnet.private_b.id,
     ]
-    security_groups  = [aws_security_group.ecs_service.id]
-    assign_public_ip = true
+    security_groups = [aws_security_group.ecs_service.id]
   }
+
+  load_balancer {
+        target_group_arn = aws_lb_target_group.api.arn
+        container_name   = "proxy"
+        container_port   = 8000
+    }
 }
